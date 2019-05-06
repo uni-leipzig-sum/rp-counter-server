@@ -35,6 +35,7 @@ ANALOG:PIN? PIN_NAME\r\n
 Gets the value of an analog IO Pin. PIN_NAME can be one of:
 
 | PIN_NAME |
+|----------|
 | `AOUT0`  |
 | `AOUT1`  |
 | `AOUT2`  |
@@ -58,6 +59,7 @@ Arguments:
 - `PIN_NAME` can be one of:
 
 | PIN_NAME |
+|----------|
 | `AOUT0`  |
 | `AOUT1`  |
 | `AOUT2`  |
@@ -99,7 +101,6 @@ Arguments:
 | LED5     |
 | LED6     |
 | LED7     |
-|----------|
 | DIO0_P   |
 | DIO1_P   |
 | DIO2_P   |
@@ -108,7 +109,6 @@ Arguments:
 | DIO5_P   |
 | DIO6_P   |
 | DIO7_P   |
-|----------|
 | DIO0_N   |
 | DIO1_N   |
 | DIO2_N   |
@@ -141,7 +141,6 @@ Arguments:
 | LED5     |
 | LED6     |
 | LED7     |
-|----------|
 | DIO0_P   |
 | DIO1_P   |
 | DIO2_P   |
@@ -150,7 +149,6 @@ Arguments:
 | DIO5_P   |
 | DIO6_P   |
 | DIO7_P   |
-|----------|
 | DIO0_N   |
 | DIO1_N   |
 | DIO2_N   |
@@ -183,7 +181,6 @@ Arguments:
 | LED5     |
 | LED6     |
 | LED7     |
-|----------|
 | DIO0_P   |
 | DIO1_P   |
 | DIO2_P   |
@@ -192,7 +189,6 @@ Arguments:
 | DIO5_P   |
 | DIO6_P   |
 | DIO7_P   |
-|----------|
 | DIO0_N   |
 | DIO1_N   |
 | DIO2_N   |
@@ -224,7 +220,6 @@ Arguments:
 | LED5     |
 | LED6     |
 | LED7     |
-|----------|
 | DIO0_P   |
 | DIO1_P   |
 | DIO2_P   |
@@ -233,7 +228,6 @@ Arguments:
 | DIO5_P   |
 | DIO6_P   |
 | DIO7_P   |
-|----------|
 | DIO0_N   |
 | DIO1_N   |
 | DIO2_N   |
