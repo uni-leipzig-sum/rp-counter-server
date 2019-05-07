@@ -3,7 +3,8 @@
 #include "counter.h"
 #include "command.h"
 
-static const command_map_t counter_commands[] = {
+
+static command_map_t counter_commands[] = {
   /* Analog IO */
   /* Reset all analog pins */
   { .cmd = "ANALOG:RST",         .handler = Analog_PinReset},
@@ -43,7 +44,7 @@ static const command_map_t counter_commands[] = {
      counts and starts counting again. This means, you might get out of date counts.
      Response format: "700,702" (List of counts, one for each APD) */
   { .cmd = "COUNTER:WRSC?",      .handler = Counter_WaitAndReadAndStartCounting },
-  NULL
+  COMMAND_MAP_END
 };
 
 counter_context_t counter_context = {

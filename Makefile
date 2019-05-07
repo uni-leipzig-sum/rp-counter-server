@@ -12,6 +12,8 @@ CNTSRV=rp-counter-server
 SVC=redpitaya_counter.service
 ARTIFACTS= $(CNTSRV)
 
+DEBUG ?= 0
+
 all: $(CNTSRV)
 
 $(CNTSRV):

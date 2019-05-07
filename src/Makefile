@@ -17,6 +17,8 @@
 VERSION ?= 0.00-0000
 REVISION ?= devbuild
 
+DEBUG ?= 0
+
 # Extensions
 CPPEXT   = .c
 CXXEXT   = .cpp

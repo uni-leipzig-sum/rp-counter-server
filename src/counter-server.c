@@ -21,17 +21,17 @@
 #include <unistd.h>
 #include <syslog.h>
 
-#include "redpitaya/rp.h"
-
+#include "common.h"
 #include "command.h"
+
 
 #define MIN(X, Y) (((X) < (Y)) ? (X) : (Y))
 #define MAX(X, Y) (((X) > (Y)) ? (X) : (Y))
 
 #define LISTEN_BACKLOG 50
-#define LISTEN_PORT 5001
+#define LISTEN_PORT 5000
 #define MAX_BUFF_SIZE 1024
-#define MAX_ARGS = 16
+#define MAX_ARGS 16
 
 static bool app_exit = false;
 static char delimiter[] = "\r\n";
@@ -73,6 +73,9 @@ static size_t getNextCommand(const char* buffer, size_t bufferLen)
 {
   size_t delimiterLen = sizeof(delimiter) - 1; // dont count last null char.
   size_t i = 0;
+
+  RP_LOG(LOG_INFO, "Begin: getNextCommand\n");
+  
   for (i = 0; i < bufferLen; i++) {
 
     // Find match for end of delimiter
@@ -121,23 +124,26 @@ static int parseCommand(char *cmdstr, char **res, size_t *resLen)
   int nargs = 0;
 
   // Tokenize
-  cmd = strtok(cmdstr, " ");
-  while ((tok = strtok(NULL, " ")) != NULL)
+  RP_LOG(LOG_INFO, "Tokenizing command\n");
+  cmd = strtok(cmdstr, " ,");
+  while ((tok = strtok(NULL, " ,")) != NULL)
     args[nargs++] = tok;
 
   // Match command
+  RP_LOG(LOG_INFO, "Matching command\n");
   command_map_t *p = counter_context.cmdlist;
-  while(*p != NULL) {
+  while(p->cmd != NULL) {
     if (strcmp(p->cmd, cmd) == 0)
 	    break;
     p++;
   }
-  if (*p == NULL) {
+  if (p->cmd == NULL) {
     RP_LOG(LOG_ERR, "Received unknown command (%s)", cmd);
     return 1;
   }
 
   // Call the handler
+  RP_LOG(LOG_INFO, "Calling command handler\n");
   return p->handler(nargs, args, res, resLen);
 }
 
@@ -167,6 +173,8 @@ static int handleConnection(int connfd) {
         break;
       }
 
+	  RP_LOG(LOG_INFO, "Got message\n");
+	  
       // First make sure that message buffer is large enough
       while (msg_end + read_size >= message_len) {
         message_len *= 2;
@@ -181,13 +189,16 @@ static int handleConnection(int connfd) {
       char *m = message_buff;
       size_t pos = -1;
       while ((pos = getNextCommand(m, msg_end)) != -1) {
-
+		  
         //Parse command
         size_t cmdLen = pos-sizeof(delimiter)+1;
         m[cmdLen] = 0; // split the command string before the termination character
+		RP_LOG(LOG_INFO, "Got command: %s\n", m);
         char *res = NULL;
         size_t resLen;
         int result = parseCommand(m, &res, &resLen);
+
+		RP_LOG(LOG_INFO, "Processed command. Got response: %s\n", res);
 
         // Send the response (if any) back to the client
         if (!result && res != NULL) {
@@ -272,11 +283,6 @@ int main(int argc, char *argv[])
     return (EXIT_FAILURE);
   }
 
-  // user_context will be pointer to socket
-  scpi_context.user_context = NULL;
-  scpi_context.binary_output = false;
-  SCPI_Init(&scpi_context);
-
   // Create a socket
   listenfd = socket(AF_INET, SOCK_STREAM, 0);
   if (listenfd == -1)
@@ -334,8 +340,6 @@ int main(int argc, char *argv[])
 
         // this is the child process
         close(listenfd); // child doesn't need the listener
-
-        scpi_context.user_context = &connfd;
 
         result = handleConnection(connfd);
 
