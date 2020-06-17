@@ -18,6 +18,8 @@ typedef uint32_t size_t;
 #define RP_LOG(...)
 #endif
 
+int join_uints(char **buf, size_t *bufsize, size_t offset, unsigned int *uints, size_t num_uints);
+
 // Safe implementation of sprintf. buffer will be allocated by the function
 // and must be freed by the caller.
 int safe_sprintf(char **buf, const char *format, ...);

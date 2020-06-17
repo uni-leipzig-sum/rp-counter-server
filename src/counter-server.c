@@ -139,6 +139,7 @@ static int parseCommand(char *cmdstr, char **res, size_t *resLen)
   }
   if (p->cmd == NULL) {
     RP_LOG(LOG_ERR, "Received unknown command (%s)", cmd);
+	*resLen = safe_sprintf(res, "ERR: Unknown command %s", cmd);
     return 1;
   }
 
@@ -195,13 +196,13 @@ static int handleConnection(int connfd) {
         m[cmdLen] = 0; // split the command string before the termination character
 		RP_LOG(LOG_INFO, "Got command: %s\n", m);
         char *res = NULL;
-        size_t resLen;
-        int result = parseCommand(m, &res, &resLen);
+        size_t resLen = 0;
+        parseCommand(m, &res, &resLen);
 
 		RP_LOG(LOG_INFO, "Processed command. Got response: %s\n", res);
 
         // Send the response (if any) back to the client
-        if (!result && res != NULL) {
+        if (res != NULL) {
           //Append delimiter to the response
           //Note: as the socket is not buffered, this results in
           //less tcp frames (ideally only one) instead of at least two
@@ -212,6 +213,7 @@ static int handleConnection(int connfd) {
           //Send response to client
           write(connfd, res, resLen);
           free(res);
+		  res = NULL;
         }
 
         m += pos;
